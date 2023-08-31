@@ -160,6 +160,25 @@ iface eth1 inet static
 #设置自动获取IP
 auto eth2
 iface eth2 inet dhcp
+
+#配置冗余网口
+auto eth2
+iface eth2 inet manual
+    pre-up ifconfig eth2 up
+    bond-master bond0
+
+auto eth3
+iface eth3 inet manual
+    pre-up ifconfig eth3 up
+    bond-master bond0
+
+auto bond0
+iface bond0 inet static
+    pre-up modprobe bonding mode=1 miimon=100 primary=eth2
+    post-up ifenslave bond0 eth2 eth3
+    address 192.168.5.204
+    netmask 255.255.255.0
+    gateway 192.168.5.1
         
 ```
 
